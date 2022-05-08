@@ -48,7 +48,7 @@
 #include "ns3/internet-stack-helper.h"
 #include "ns3/ipv4-address-helper.h"
 #include "ns3/ipv4-global-routing-helper.h"
-#include "ns3/flow-monitor-module.h"
+//#include "ns3/flow-monitor-module.h"
 
 #define MAXFLOWS 100
 
@@ -58,10 +58,10 @@ using namespace ns3;
 
 Ptr<PacketSink> sink;     /* Pointer to the packet sink application */
 uint64_t lastTotalRx = 0; /* The value of the last total received bytes */
-FlowMonitorHelper flowmon;
-Ptr<FlowMonitor> monitor;
+//FlowMonitorHelper flowmon;
+//Ptr<FlowMonitor> monitor;
 std::ofstream myfile;
-void PrintFlowMonitorStats();
+//void PrintFlowMonitorStats();
 void CalculateThroughput();
 uint32_t rxBytesWarmup[MAXFLOWS] = {0};
 uint32_t rxBytesPrev = 0;
@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
   Simulator::Schedule(Seconds(1.1), &CalculateThroughput);
 
   // Install FlowMonitor
-  monitor = flowmon.InstallAll();
+  //monitor = flowmon.InstallAll();
 
   /* Enable Traces */
   if (pcapTracing)
@@ -257,42 +257,42 @@ int main(int argc, char *argv[])
   return 0;
 }
 
-void PrintFlowMonitorStats()
-{
-  double flowThr = 0;
-  double totalThr = 0;
-  uint32_t rxBytes = 0;
+// void PrintFlowMonitorStats()
+// {
+//   double flowThr = 0;
+//   double totalThr = 0;
+//   uint32_t rxBytes = 0;
 
-  std::map<FlowId, FlowMonitor::FlowStats> flowStats = monitor->GetFlowStats();
-  Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier());
+//   std::map<FlowId, FlowMonitor::FlowStats> flowStats = monitor->GetFlowStats();
+//   Ptr<Ipv4FlowClassifier> classifier = DynamicCast<Ipv4FlowClassifier>(flowmon.GetClassifier());
 
-  if (Simulator::Now().GetSeconds() == warmupTime)
-  { // First function call, need to initialize rxBytesWarmup
-    for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator stats = flowStats.begin(); stats != flowStats.end(); ++stats)
-    {
-      rxBytesWarmup[stats->first - 1] = stats->second.rxBytes;
-      rxBytesPrev += stats->second.rxBytes;
-    }
-  }
-  else
-  {
-    myfile << Simulator::Now().GetSeconds() << ",";
-    for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator stats = flowStats.begin(); stats != flowStats.end(); ++stats)
-    {
-      flowThr = (stats->second.rxBytes - rxBytesWarmup[stats->first - 1]) * 8.0 / ((Simulator::Now().GetSeconds() - warmupTime) * 1e6);
-      myfile << flowThr << ", ";
-      if (stats->second.rxBytes != 0)
-      {
-        rxBytes += stats->second.rxBytes;
-        totalThr += flowThr;
-      }
-    }
-    myfile << ((rxBytes - rxBytesPrev) * 8 / (interval * 1e6)) << "," << totalThr << std::endl;
-    rxBytesPrev = rxBytes;
-  }
+//   if (Simulator::Now().GetSeconds() == warmupTime)
+//   { // First function call, need to initialize rxBytesWarmup
+//     for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator stats = flowStats.begin(); stats != flowStats.end(); ++stats)
+//     {
+//       rxBytesWarmup[stats->first - 1] = stats->second.rxBytes;
+//       rxBytesPrev += stats->second.rxBytes;
+//     }
+//   }
+//   else
+//   {
+//     myfile << Simulator::Now().GetSeconds() << ",";
+//     for (std::map<FlowId, FlowMonitor::FlowStats>::const_iterator stats = flowStats.begin(); stats != flowStats.end(); ++stats)
+//     {
+//       flowThr = (stats->second.rxBytes - rxBytesWarmup[stats->first - 1]) * 8.0 / ((Simulator::Now().GetSeconds() - warmupTime) * 1e6);
+//       myfile << flowThr << ", ";
+//       if (stats->second.rxBytes != 0)
+//       {
+//         rxBytes += stats->second.rxBytes;
+//         totalThr += flowThr;
+//       }
+//     }
+//     myfile << ((rxBytes - rxBytesPrev) * 8 / (interval * 1e6)) << "," << totalThr << std::endl;
+//     rxBytesPrev = rxBytes;
+//   }
 
-  Simulator::Schedule(Seconds(interval), &PrintFlowMonitorStats); // Schedule next stats printout
-}
+//   Simulator::Schedule(Seconds(interval), &PrintFlowMonitorStats); // Schedule next stats printout
+// }
 
 void CalculateThroughput()
 {
