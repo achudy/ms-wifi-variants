@@ -130,10 +130,12 @@ int main(int argc, char *argv[])
                                      "DataMode", StringValue(phyRate),
                                      "ControlMode", StringValue("HtMcs0"));
 
-  NodeContainer networkNodes;
-  networkNodes.Create(1);
-  NodeContainer wifiApNode = networkNodes;
-  Ptr<Node> apWifiNode = networkNodes.Get(0);
+  //NodeContainer networkNodes;
+  //networkNodes.Create(1);
+  NodeContainer wifiApNode;
+  wifiApNode.Create (1);
+  //NodeContainer wifiApNode = networkNodes;
+  //Ptr<Node> apWifiNode = networkNodes.Get(0);
   //
   // Ptr<Node> staWifiNode = networkNodes.Get (1);
   //
@@ -146,7 +148,7 @@ int main(int argc, char *argv[])
                   "Ssid", SsidValue(ssid));
 
   NetDeviceContainer apDevice;
-  apDevice = wifiHelper.Install(wifiPhy, wifiMac, apWifiNode);
+  apDevice = wifiHelper.Install(wifiPhy, wifiMac, wifiApNode);
 
   /* Configure STA */
   wifiMac.SetType("ns3::StaWifiMac",
@@ -163,12 +165,12 @@ int main(int argc, char *argv[])
 
   mobility.SetPositionAllocator(positionAlloc);
   mobility.SetMobilityModel("ns3::ConstantPositionMobilityModel");
-  mobility.Install(apWifiNode);
+  mobility.Install(wifiApNode);
   mobility.Install(wifiStaNodes);
 
   /* Internet stack */
   InternetStackHelper stack;
-  stack.Install(networkNodes);
+  stack.Install(wifiApNode);
 
   Ipv4AddressHelper address;
   address.SetBase("10.0.0.0", "255.255.255.0");
