@@ -171,6 +171,7 @@ int main(int argc, char *argv[])
   /* Internet stack */
   InternetStackHelper stack;
   stack.Install(wifiApNode);
+  stack.Install(wifiStaNodes);
 
   Ipv4AddressHelper address;
   address.SetBase("10.0.0.0", "255.255.255.0");
